@@ -3,28 +3,30 @@ import {
   Button,
   AppBar,
   Toolbar,
+  Divider,
   Typography,
   IconButton,
   Drawer,
   List,
   ListItem,
   ListItemText,
-  CssBaseline
+  CssBaseline,
+  Hidden
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
-
-const drawerWidth = 300;
-
+const drawerWidth = 250;
 const useStyles = makeStyles((theme) => ({
   root: {
-    paddingLeft: drawerWidth
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1
+    [theme.breakpoints.up("sm")]: {
+      paddingLeft: drawerWidth
+    }
   },
   menuButton: {
-    marginRight: theme.spacing(2)
+    marginRight: theme.spacing(2),
+    [theme.breakpoints.up("sm")]: {
+      display: "none"
+    }
   },
   title: {
     marginRight: "auto"
@@ -34,28 +36,54 @@ const useStyles = makeStyles((theme) => ({
   },
   content: {
     padding: theme.spacing(3)
+  },
+  appBar: {
+    [theme.breakpoints.up("sm")]: {
+      width: `calc(100% - ${drawerWidth}px)`
+    }
   }
 }));
 
-const ClippedDrawer = () => {
+const ResponsiveDrawer = () => {
   const classes = useStyles();
+  const drawerItems = (
+    <>
+      <Toolbar />
+      <Divider />
+      <List disablePadding className={classes.drawer}>
+        <ListItem button>
+          <ListItemText primary="First Item" />
+        </ListItem>
+        <ListItem button>
+          <ListItemText primary="Second Item" />
+        </ListItem>
+      </List>
+    </>
+  );
   const [open, setOpen] = useState(false);
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <Drawer variant="permanent" open={open} onClose={() => setOpen(false)}>
-        <Toolbar />
-        <List disablePadding className={classes.drawer}>
-          <ListItem button>
-            <ListItemText primary="First Item" />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="Second Item" />
-          </ListItem>
-        </List>
-      </Drawer>
+      <Hidden smDown implementation="css">
+        <Drawer open={open} onClose={() => setOpen(false)}>
+          {drawerItems}
+        </Drawer>
+      </Hidden>
+      <Hidden xsDown implementation="css">
+        <Drawer open={open} onClose={() => setOpen(false)} variant="permanent">
+          {drawerItems}
+        </Drawer>
+      </Hidden>
       <AppBar position="fixed" color="secondary" className={classes.appBar}>
         <Toolbar>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            onClick={() => setOpen(true)}
+          >
+            <MenuIcon />
+          </IconButton>
           <Typography variant="h6" className={classes.title}>
             toofaniCoder
           </Typography>
@@ -84,4 +112,4 @@ const ClippedDrawer = () => {
   );
 };
 
-export default ClippedDrawer;
+export default ResponsiveDrawer;

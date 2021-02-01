@@ -13,16 +13,10 @@ import {
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import MenuIcon from "@material-ui/icons/Menu";
+import classnames from "classnames";
 
-const drawerWidth = 300;
-
+const drawerWidth = 250;
 const useStyles = makeStyles((theme) => ({
-  root: {
-    paddingLeft: drawerWidth
-  },
-  appBar: {
-    zIndex: theme.zIndex.drawer + 1
-  },
   menuButton: {
     marginRight: theme.spacing(2)
   },
@@ -33,18 +27,42 @@ const useStyles = makeStyles((theme) => ({
     width: drawerWidth
   },
   content: {
-    padding: theme.spacing(3)
+    padding: theme.spacing(3),
+    transition: theme.transitions.create("margin", {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.leavingScreen
+    })
+  },
+  appBar: {
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen
+    })
+  },
+  appBarShift: {
+    width: `calc(100% -${drawerWidth}px)`,
+    marginLeft: drawerWidth,
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen
+    })
+  },
+  contentShift: {
+    marginLeft: drawerWidth,
+    transition: theme.transitions.create(["margin", "width"], {
+      easing: theme.transitions.easing.easeOut,
+      duration: theme.transitions.duration.enteringScreen
+    })
   }
 }));
 
-const ClippedDrawer = () => {
+const PersistentDrawer = () => {
   const classes = useStyles();
   const [open, setOpen] = useState(false);
   return (
-    <div className={classes.root}>
+    <div>
       <CssBaseline />
-      <Drawer variant="permanent" open={open} onClose={() => setOpen(false)}>
-        <Toolbar />
+      <Drawer open={open} onClose={() => setOpen(false)} variant="persistent">
         <List disablePadding className={classes.drawer}>
           <ListItem button>
             <ListItemText primary="First Item" />
@@ -54,16 +72,31 @@ const ClippedDrawer = () => {
           </ListItem>
         </List>
       </Drawer>
-      <AppBar position="fixed" color="secondary" className={classes.appBar}>
+      <AppBar
+        position="static"
+        color="secondary"
+        className={classnames(classes.appBar, { [classes.appBarShift]: open })}
+      >
         <Toolbar>
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
+            onClick={() => setOpen(!open)}
+          >
+            <MenuIcon />
+          </IconButton>
           <Typography variant="h6" className={classes.title}>
             toofaniCoder
           </Typography>
           <Button color="inherit">Login</Button>
         </Toolbar>
       </AppBar>
-      <main className={classes.content}>
-        <Toolbar />
+      <main
+        className={classnames(classes.content, {
+          [classes.contentShift]: open
+        })}
+      >
         <Typography variant="h2">New ReactJs Features!</Typography>
         <Typography>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora,
@@ -84,4 +117,4 @@ const ClippedDrawer = () => {
   );
 };
 
-export default ClippedDrawer;
+export default PersistentDrawer;
